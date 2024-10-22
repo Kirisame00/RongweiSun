@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rhombus Puzzle</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f0f0f0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #gridCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .rhombus {
+            width: 150px;
+            height: 150px;
+            background-color: #ffffff;
+            position: absolute;
+            transform: rotate(45deg);
+            transform-origin: center;
+            animation: puzzleEffect 0.6s forwards;
+            background-size: cover;
+            box-shadow: 5px 5px 5px rgb(70, 70, 70);
+        }
+
+        @keyframes puzzleEffect {
+            from {
+                opacity: 0;
+                transform: scale(0) rotate(45deg);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) rotate(45deg);
+            }
+        }
+
+        #canvasContainer {
+            position: absolute;
+            top: calc(50% - 75px);
+            left: calc(50% - 75px);
+            width: 150px;
+            height: 150px;
+            transform: rotate(45deg);
+            overflow: hidden;
+            pointer-events: none;
+        }
+        
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .table1{
+            position: absolute;
+            background-color: #585858;
+            bottom: 92vh;
+            width: 100vw;
+            height: 8vh;
+            box-shadow: 5px 5px 5px rgb(70, 70, 70);
+        }
+        .table2{
+            position: absolute;
+            background-color: #585858;
+            top: 0;
+            left: 0;
+            width: 8vw;
+            height: 100vh;
+        }
+        .table3{
+            position: absolute;
+            background-color: #585858;
+            bottom: 0;
+            right: 0;
+            width: 8vw;
+            height: 100vh;
+        }
+        .table4{
+            position: absolute;
+            background-color: #585858;
+            bottom: 0;
+            right: 0;
+            width: 100vw;
+            height: 8vh;
+        }
+
+        .text{
+            top:2vh;
+            text-align: center;
+            font-size: larger;
+            color: #ffffff;
+            text-decoration: none;
+            position: absolute;
+        }
+
+        /* 将方块层级提升 */
+        .colorBlock {
+            position: absolute;
+            z-index: 10; /* 让色块始终在拼图块上面 */
+        }
+
+        /* 设置背景中的两段白色文字样式 */
+        .backgroundText {
+            position: absolute;
+            color: rgb(152, 152, 152);
+            font-size: 1rem;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            width: 100%;
+            pointer-events: none; /* 确保文字不影响其他事件 */
+        }
+
+        #text1 {
+            top: 20vh; /* 第一段文字显示在页面的20%高度处 */
+        }
+        #text3 {
+            top: 25vh; /* 第一段文字显示在页面的20%高度处 */
+        }
+
+        #text2 {
+            bottom: 20vh; /* 第二段文字显示在页面底部的20%高度处 */
+        }
+        #text4 {
+            bottom: 15vh; /* 第二段文字显示在页面底部的20%高度处 */
+        }
+
+        #trail-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none; /* 使拖尾不干扰鼠标事件 */
+            z-index: 9999; /* 确保在所有内容之上 */
+        }
+
+        .trail, #current, #last-trail {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 1.2px solid black; /* 使图案空心 */
+            transform: rotate(45deg); /* 使其看起来像菱形 */
+            pointer-events: none;
+            border-radius: 0; /* 使拖尾形状为菱形 */
+            transform-origin: center; /* 确保旋转时以中心为基点 */
+        }
+
+        #current {
+            border-color: black; /* 确保当前图案为黑色 */
+        }
+
+        #last-trail {
+            border-color: black; /* 确保最后一刻图案为黑色 */
+        }
+
+    </style>
+</head>
+<body>
+    <!-- 背景网格画布 -->
+    <canvas id="gridCanvas"></canvas>
+    
+    <div id="canvasContainer">
+        <canvas id="backgroundCanvas" width="150" height="150"></canvas>
+    </div>
+    
+    <div class="table1"></div>
+    <div class="table2"></div>
+    <div class="table3"></div>
+    <div class="table4"></div>
+    <div class="text">
+        <p> PUZZLE GAME</p>
+    </div>
+
+    <!-- 添加两段背景文字 -->
+    <div id="text1" class="backgroundText">Double clic to place PUZZLES</div>
+    <div id="text3" class="backgroundText">Clic to place color patch</div>
+    <div id="text2" class="backgroundText">Right clic to delete</div>
+    <div id="text4" class="backgroundText">Remenber to take a screenshot</div>
+
+    <div id="trail-container">
+        <div id="current"></div>
+        <div id="last-trail"></div>
+    </div>
+
+    <script>
+        const existingRhombuses = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const gridCanvas = document.getElementById('gridCanvas');
+            const backgroundCanvas = document.getElementById('backgroundCanvas');
+            const backgroundCtx = backgroundCanvas.getContext('2d');
+            
+            let clickTimeout = null; // 定时器变量，用来区分单击和双击
+
+            drawGrid(gridCanvas); // 绘制网格
+            drawRandomLinesPattern(backgroundCtx, {}, true);
+
+            window.addEventListener('resize', () => drawGrid(gridCanvas));
+
+            // 双击事件
+            document.body.addEventListener('dblclick', (event) => {
+                if (clickTimeout) {
+                    clearTimeout(clickTimeout); // 如果有单击等待，取消
+                    clickTimeout = null; // 重置
+                }
+
+                const mouseX = event.clientX;
+                const mouseY = event.clientY;
+
+                const centerX = window.innerWidth / 2;
+                const centerY = window.innerHeight / 2;
+
+                const diagonal = 150 * Math.sqrt(2);
+
+                const deltaX = mouseX - centerX;
+                const deltaY = mouseY - centerY;
+
+                const gridX = Math.round((deltaX + deltaY) / diagonal) * diagonal;
+                const gridY = Math.round((deltaY - deltaX) / diagonal) * diagonal;
+
+                const newRhombusX = centerX + (gridX - gridY) / 2 - 75;
+                const newRhombusY = centerY + (gridX + gridY) / 2 - 75;
+
+                const newRhombus = document.createElement('div');
+                newRhombus.className = 'rhombus';
+                newRhombus.style.left = `${newRhombusX}px`;
+                newRhombus.style.top = `${newRhombusY}px`;
+
+                const canvas = document.createElement('canvas');
+                canvas.width = 150;
+                canvas.height = 150;
+                const ctx = canvas.getContext('2d');
+
+                const edgePatterns = getEdgePatterns(newRhombusX, newRhombusY);
+                const newEdges = drawRandomLinesPattern(ctx, edgePatterns);
+
+                newRhombus.style.backgroundImage = `url(${canvas.toDataURL()})`;
+
+                document.body.appendChild(newRhombus);
+                existingRhombuses.push({ x: newRhombusX, y: newRhombusY, edges: newEdges });
+
+                newRhombus.addEventListener('contextmenu', function(e) {
+                    e.preventDefault();
+                    existingRhombuses.splice(existingRhombuses.findIndex(r => r.x === newRhombusX && r.y === newRhombusY), 1);
+                    newRhombus.remove();
+                });
+            });
+
+            // 单击事件，用于生成色块
+            document.body.addEventListener('click', function(event) {
+                if (clickTimeout) {
+                    clearTimeout(clickTimeout); // 如果在等待双击期间再次点击，取消定时器
+                }
+                clickTimeout = setTimeout(() => {
+                    generateRandomColorBlock(event);  // 调用生成色块的函数
+                    clickTimeout = null; // 清空计时器
+                }, 300); // 设置一个300ms的延迟，等待是否有双击事件发生
+            });
+        });
+
+        function drawGrid(canvas) {
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 0.7;
+            ctx.setLineDash([15, 10]); // 设置虚线样式
+
+            const diagonal = 150 * Math.sqrt(2);
+            const width = canvas.width;
+            const height = canvas.height;
+
+            ctx.beginPath();
+
+            // 绘制从左上到右下的斜线
+            for (let x = -width; x < width + height; x += diagonal) {
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x + height, height);
+            }
+
+            // 绘制从左下到右上的斜线
+            for (let x = -width; x < width + height; x += diagonal) {
+                ctx.moveTo(x, height);
+                ctx.lineTo(x + height, 0);
+            }
+
+            ctx.stroke();
+        }
+
+        function getEdgePatterns(x, y) {
+            const edgePatterns = {};
+            const diagonal = 150 * Math.sqrt(2);
+            for (const rhombus of existingRhombuses) {
+                const dx = x - rhombus.x;
+                const dy = y - rhombus.y;
+
+                if (Math.abs(dx - diagonal) < 1 && Math.abs(dy) < 1) {
+                    edgePatterns.left = rhombus.edges.right;
+                } else if (Math.abs(dx + diagonal) < 1 && Math.abs(dy) < 1) {
+                    edgePatterns.right = rhombus.edges.left;
+                } else if (Math.abs(dy - diagonal) < 1 && Math.abs(dx) < 1) {
+                    edgePatterns.top = rhombus.edges.bottom;
+                } else if (Math.abs(dy + diagonal) < 1 && Math.abs(dx) < 1) {
+                    edgePatterns.bottom = rhombus.edges.top;
+                }
+            }
+            return edgePatterns;
+        }
+
+        function drawRandomLinesPattern(ctx, edgePatterns, isFirst = false) {
+            ctx.clearRect(0, 0, 150, 150);
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, 150, 150);
+
+            ctx.strokeStyle = '#000000';
+
+            const linesCount = 5;
+            const lineLength = 225;
+
+            ctx.save();
+            ctx.translate(75, 75);
+            ctx.rotate(Math.PI / 4); // Rotate the canvas for drawing
+
+            const edges = { top: [], bottom: [], left: [], right: [] };
+
+            for (let i = 0; i < linesCount; i++) {
+                ctx.lineWidth = Math.random() * 2 + 1;
+                if (Math.random() > 0.5) {
+                    const y = isFirst ? Math.random() * lineLength - lineLength / 2 : (edgePatterns.top || []).shift() || Math.random() * lineLength - lineLength / 2;
+                    ctx.beginPath();
+                    ctx.moveTo(-lineLength / 2, y);
+                    ctx.lineTo(lineLength / 2, y);
+                    ctx.stroke();
+                    edges.top.push(y);
+                    edges.bottom.push(y); // Ensure opposite sides match
+                } else {
+                    const x = isFirst ? Math.random() * lineLength - lineLength / 2 : (edgePatterns.left || []).shift() || Math.random() * lineLength - lineLength / 2;
+                    ctx.beginPath();
+                    ctx.moveTo(x, -lineLength / 2);
+                    ctx.lineTo(x, lineLength / 2);
+                    ctx.stroke();
+                    edges.left.push(x);
+                    edges.right.push(x); // Ensure opposite sides match
+                }
+            }
+
+            ctx.restore();
+            return edges;
+        }
+
+        // 随机生成色块
+        function generateRandomColorBlock(event) {
+            const colors = ['#EEC34C', '#3F4583', '#D41031']; // 定义三种颜色
+            const block = document.createElement('div');
+            block.className = 'colorBlock';
+            block.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+
+            // 随机选择长方形或正方形，并且宽高在100到200之间随机取得
+            const randomSize = Math.floor(Math.random() * 51) + 70; // 随机生成100到200之间的数
+            const isSquare = Math.random() > 0.5;
+
+            if (isSquare) {
+                block.style.width = `${randomSize}px`;
+                block.style.height = `${randomSize}px`; // 正方形时宽高相等
+            } else {
+                const randomHeight = Math.floor(Math.random() * 101) + 100; // 长方形的另一边
+                block.style.width = `${randomSize}px`; // 长方形时宽度
+                block.style.height = `${randomHeight}px`; // 长方形时高度
+            }
+
+            // 将色块位置与鼠标位置对齐（中心重合）
+            const mouseX = event.clientX;
+            const mouseY = event.clientY;
+            block.style.left = `${mouseX - parseInt(block.style.width) / 2}px`; // 使色块的中心对齐鼠标位置
+            block.style.top = `${mouseY - parseInt(block.style.height) / 2}px`; // 使色块的中心对齐鼠标位置
+            block.style.position = 'absolute';
+
+            // 将色块添加到页面
+            document.body.appendChild(block);
+
+            // 为色块添加右键事件删除
+            block.addEventListener('contextmenu', function(e) {
+                e.preventDefault();  // 阻止默认右键菜单
+                block.remove();      // 删除色块
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const trailContainer = document.getElementById('trail-container');
+            const trailCount = 20; // 拖尾数量
+            const trails = [];
+
+            // 创建拖尾元素
+            for (let i = 0; i < trailCount; i++) {
+                const trail = document.createElement('div');
+                trail.className = 'trail';
+                trail.style.opacity = (1 - i / trailCount); // 设置初始不透明度
+                trailContainer.appendChild(trail);
+                trails.push(trail);
+            }
+
+            // 创建光标下方的图案
+            const current = document.getElementById('current');
+            // 创建拖尾最后一刻的位置图案
+            const lastTrail = document.getElementById('last-trail');
+
+            let lastPosition = { x: -100, y: -100 };
+
+            function update() {
+                // 将每个拖尾的位置更新到前一个拖尾的位置
+                for (let i = trailCount - 1; i > 0; i--) {
+                    const currentTrail = trails[i];
+                    const previousTrail = trails[i - 1];
+                    currentTrail.style.left = `${previousTrail.style.left}`;
+                    currentTrail.style.top = `${previousTrail.style.top}`;
+                    currentTrail.style.opacity = `${1 - i / trailCount}`; // 更新拖尾的透明度
+                }
+
+                // 更新第一个拖尾的位置到鼠标位置
+                const firstTrail = trails[0];
+                firstTrail.style.left = `${lastPosition.x - 10}px`; // 使菱形中心位于光标位置
+                firstTrail.style.top = `${lastPosition.y - 10}px`; // 使菱形中心位于光标位置
+                firstTrail.style.opacity = '1';
+
+                // 更新当前光标下方的图案的位置
+                current.style.left = `${lastPosition.x - 10}px`; // 使菱形中心位于光标位置
+                current.style.top = `${lastPosition.y - 10}px`; // 使菱形中心位于光标位置
+
+                // 更新拖尾最后一刻的位置图案的位置
+                lastTrail.style.left = `${firstTrail.style.left}`;
+                lastTrail.style.top = `${firstTrail.style.top}`;
+
+                // 继续动画
+                requestAnimationFrame(update);
+            }
+
+            // 开始更新
+            requestAnimationFrame(update);
+
+            // 监听鼠标移动事件
+            document.addEventListener('mousemove', (event) => {
+                lastPosition.x = event.clientX;
+                lastPosition.y = event.clientY;
+            });
+        });
+    </script>
+</body>
+</html>
+
+

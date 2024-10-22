@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cardgame</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #ffffff;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+        .game-table {
+            display: grid;
+            grid-template-columns: repeat(4, 120px);
+            gap: 20px;
+            padding: 30px;
+            background-color: #585858;
+            border-radius: 10px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-slot {
+            width: 120px;
+            height: 120px;
+            background-color: #ecf0f1;
+            border: 2px dashed #7f8c8d;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .rhombus-slot {
+            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+            width: 120px;
+            height: 120px;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .rectangle-slot {
+            width: 120px;
+            height: 180px;
+            background-color: #ffffff;
+            border: 2px dashed #7f8c8d;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .combine-area-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            width: 120px;
+            height: 540px;
+            background-color: transparent;
+            position: relative;
+        }
+
+        .combine-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 120px;
+            height: 360px;
+            background-color: #EEC34C;
+            color: white;
+            font-size: 20px;
+            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            margin-bottom: auto; /* 保证CRAFTING区域在上方 */
+        }
+
+        .combine-slot {
+            width: 120px;
+            height: 100%;
+            background-color: #ffffff;
+            border: 2px #000000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .button-area {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 120px;
+            height: 60px;
+            background-color: #2c3e50;
+            color: white;
+            font-size: 18px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
+            cursor: pointer;
+            user-select: none;
+            margin-top: 20px; /* 添加额外间距确保按钮之间有空间 */
+        }
+
+        .rhombus-card {
+            width: 80px;
+            height: 80px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+            cursor: grab;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-size: cover;
+            background-position: center;
+            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+            margin: 2px;
+            transition: transform 0.3s ease, left 0.3s ease, top 0.3s ease;
+            position: relative;
+        }
+
+        .combined-card {
+            width: 120px;
+            height: 120px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .dragging {
+            opacity: 1;
+        }
+
+        .stacked-card {
+            position: absolute;
+            left: 20px;
+            transform: translateX(-50%);
+            top: 0;
+            transform: translateY(0);
+        }
+
+        .stacked-card:nth-child(2) {
+            transform: translateY(25%);
+        }
+
+        .stacked-card:nth-child(3) {
+            transform: translateY(50%);
+        }
+
+        .stacked-card:nth-child(4) {
+            transform: translateY(75%);
+        }
+
+        .text {
+            top: 2vh;
+            left: 5vw;
+            font-size: xx-large;
+            color: #000000;
+            text-decoration: none;
+            position: absolute;
+        }
+
+        /* 设置背景中的两段白色文字样式 */
+        .backgroundText {
+            position: absolute;
+            color: rgb(0, 0, 0);
+            font-size: 1rem;
+            font-family: Arial, sans-serif;
+            width: 100%;
+            pointer-events: none; /* 确保文字不影响其他事件 */
+        }
+
+        #text1 {
+            top: 20vh; /* 第一段文字显示在页面的20%高度处 */
+            left: 5vw;
+        }
+
+        #text3 {
+            top: 25vh;
+            left: 5vw; /* 第一段文字显示在页面的20%高度处 */
+        }
+
+        #text2 {
+            top: 30vh;
+            left: 5vw; /* 第二段文字显示在页面底部的20%高度处 */
+        }
+
+        #trail-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none; /* 使拖尾不干扰鼠标事件 */
+    z-index: 9999; /* 确保在所有内容之上 */
+}
+
+.trail, #current, #last-trail {
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    border: 1.2px solid black; /* 使图案空心 */
+    transform: rotate(45deg); /* 使其看起来像菱形 */
+    pointer-events: none;
+    border-radius: 0; /* 使拖尾形状为菱形 */
+    transform-origin: center; /* 确保旋转时以中心为基点 */
+}
+
+#current {
+    border-color: black; /* 确保当前图案为黑色 */
+}
+
+#last-trail {
+    border-color: black; /* 确保最后一刻图案为黑色 */
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="game-table">
+            <!-- 菱形卡牌区 -->
+            <div class="card-slot rhombus-slot"></div>
+            <div class="card-slot rhombus-slot"></div>
+            <div class="card-slot rhombus-slot"></div>
+            <div class="card-slot rhombus-slot"></div>
+            <div class="card-slot rhombus-slot"></div>
+            <div class="card-slot rhombus-slot"></div>
+            <div class="card-slot rhombus-slot"></div>
+            <div class="card-slot rhombus-slot"></div>
+
+            <!-- 长方形卡牌区 -->
+            <div class="card-slot rectangle-slot"></div>
+            <div class="card-slot rectangle-slot"></div>
+            <div class="card-slot rectangle-slot"></div>
+            <div class="card-slot rectangle-slot"></div>
+            <div class="card-slot rectangle-slot"></div>
+            <div class="card-slot rectangle-slot"></div>
+            <div class="card-slot rectangle-slot"></div>
+            <div class="card-slot rectangle-slot"></div>
+        </div>
+
+        <div class="combine-area-wrapper">
+            <div class="combine-area">
+                CRAFTING
+                <div class="combine-slot"></div>
+            </div>
+            <div class="button-area" id="deal-button">DEAL</div>
+            <div class="button-area" id="transform-button">CHANGE</div> <!-- 将CHANGE按钮放在DEAL按钮下 -->
+        </div>
+    </div>
+
+    <div class="text">
+        <p> CARD GAME</p>
+    </div>
+
+    <!-- 添加两段背景文字 -->
+    <div id="text1" class="backgroundText">Deal the cards!</div>
+    <div id="text3" class="backgroundText">Drag them to the right——</div>
+    <div id="text2" class="backgroundText">Collect all the cards!</div>
+
+
+
+
+
+    <div id="trail-container"></div>
+        <div id="current"></div>
+        <div id="last-trail"></div>
+    </div>
+
+
+
+
+
+    <script>
+        const dealButton = document.getElementById('deal-button');
+        const transformButton = document.getElementById('transform-button'); // 获取变换按钮
+        const cardSlots = document.querySelectorAll('.rhombus-slot');
+        const rectangleSlots = document.querySelectorAll('.rectangle-slot');
+        const combineSlot = document.querySelector('.combine-slot');
+        let combinedCards = [];
+
+        const images = [
+            'imagess/透明1.png',
+            'imagess/透明2.png',
+            'imagess/透明3.png',
+            'imagess/透明4.png'
+        ];
+        const usedImages = [];
+        let draggedCard = null;
+
+        dealButton.addEventListener('click', () => {
+            cardSlots.forEach(slot => slot.innerHTML = '');
+            usedImages.length = 0;
+            combinedCards = [];
+
+            while (usedImages.length < 4) {
+                const randomIndex = Math.floor(Math.random() * images.length);
+                if (!usedImages.includes(randomIndex)) {
+                    const newCard = document.createElement('div');
+                    newCard.className = 'rhombus-card';
+                    newCard.style.backgroundImage = `url(${images[randomIndex]})`;
+                    newCard.draggable = true;
+                    newCard.addEventListener('dragstart', dragStart);
+                    newCard.addEventListener('dragend', dragEnd);
+                    cardSlots[usedImages.length].appendChild(newCard);
+                    usedImages.push(randomIndex);
+                }
+            }
+        });
+
+        function dragStart(event) {
+            draggedCard = event.target;
+            event.target.classList.add('dragging');
+            setTimeout(() => {
+                event.target.style.display = 'none';
+            }, 0);
+        }
+
+        function dragEnd(event) {
+            draggedCard = null;
+            event.target.classList.remove('dragging');
+            event.target.style.display = 'flex';
+        }
+
+        combineSlot.addEventListener('dragover', function(event) {
+            event.preventDefault();
+        });
+
+        combineSlot.addEventListener('drop', function(event) {
+            event.preventDefault();
+            if (this.children.length < 4 && draggedCard) {
+                const newCard = draggedCard.cloneNode(true);
+                newCard.classList.add('stacked-card');
+                newCard.style.display = 'flex';
+                this.appendChild(newCard);
+                combinedCards.push(draggedCard);
+                draggedCard.parentElement.innerHTML = '';
+            }
+
+            if (this.children.length === 4) {
+                setTimeout(() => combineCards(this), 1000);
+            }
+        });
+
+        function combineCards(container) {
+            container.innerHTML = '';
+            const newCard = document.createElement('div');
+            newCard.className = 'combined-card';
+
+            combinedCards.forEach(card => {
+                const rhombusCard = card.cloneNode(true);
+                rhombusCard.classList.add('stacked-card');
+                newCard.appendChild(rhombusCard);
+            });
+
+            container.appendChild(newCard);
+            newCard.draggable = true;
+            newCard.addEventListener('dragstart', function (event) {
+                draggedCard = newCard;
+                setTimeout(() => {
+                    newCard.style.display = 'none';
+                }, 0);
+            });
+
+            newCard.addEventListener('dragend', function (event) {
+                newCard.style.display = 'flex';
+                draggedCard = null;
+            });
+
+            combinedCards = [];
+        }
+
+        rectangleSlots.forEach(slot => {
+            slot.addEventListener('dragover', function(event) {
+                event.preventDefault();
+            });
+
+            slot.addEventListener('drop', function(event) {
+                event.preventDefault();
+                if (!this.hasChildNodes() && draggedCard) {
+                    this.appendChild(draggedCard);
+                    draggedCard.style.display = 'flex';
+                }
+            });
+        });
+
+        transformButton.addEventListener('click', () => {
+            const combinedCard = combineSlot.firstChild;
+            if (!combinedCard) return; // 确保合成区域不为空
+
+            const rhombusCards = combinedCard.querySelectorAll('.rhombus-card');
+            let offsetY = 0;
+
+            rhombusCards.forEach((card, index) => {
+                card.style.transform = 'rotate(45deg)'; // 使卡片保持不旋转
+                card.style.position = 'absolute'; // 确保卡片可以重叠排列
+                card.style.top = `${offsetY}px`; // 垂直排列
+                offsetY += 24; // 后一张卡牌覆盖前一张的60%（即每张卡牌向下移动40% = 32px）
+            });
+        });
+
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const trailContainer = document.getElementById('trail-container');
+            const trailCount = 20; // 拖尾数量
+            const trails = [];
+
+            // 创建拖尾元素
+            for (let i = 0; i < trailCount; i++) {
+                const trail = document.createElement('div');
+                trail.className = 'trail';
+                trail.style.opacity = (1 - i / trailCount); // 设置初始不透明度
+                trailContainer.appendChild(trail);
+                trails.push(trail);
+            }
+
+            // 创建光标下方的图案
+            const current = document.getElementById('current');
+            // 创建拖尾最后一刻的位置图案
+            const lastTrail = document.getElementById('last-trail');
+
+            let lastPosition = { x: -100, y: -100 };
+
+            function update() {
+                // 将每个拖尾的位置更新到前一个拖尾的位置
+                for (let i = trailCount - 1; i > 0; i--) {
+                    const currentTrail = trails[i];
+                    const previousTrail = trails[i - 1];
+                    currentTrail.style.left = `${previousTrail.style.left}`;
+                    currentTrail.style.top = `${previousTrail.style.top}`;
+                    currentTrail.style.opacity = `${1 - i / trailCount}`; // 更新拖尾的透明度
+                }
+
+                // 更新第一个拖尾的位置到鼠标位置
+                const firstTrail = trails[0];
+                firstTrail.style.left = `${lastPosition.x - 10}px`; // 使菱形中心位于光标位置
+                firstTrail.style.top = `${lastPosition.y - 10}px`; // 使菱形中心位于光标位置
+                firstTrail.style.opacity = '1';
+
+                // 更新当前光标下方的图案的位置
+                current.style.left = `${lastPosition.x - 10}px`; // 使菱形中心位于光标位置
+                current.style.top = `${lastPosition.y - 10}px`; // 使菱形中心位于光标位置
+
+                // 更新拖尾最后一刻的位置图案的位置
+                lastTrail.style.left = `${firstTrail.style.left}`;
+                lastTrail.style.top = `${firstTrail.style.top}`;
+
+                // 继续动画
+                requestAnimationFrame(update);
+            }
+
+            // 开始更新
+            requestAnimationFrame(update);
+
+            // 监听鼠标移动事件
+            document.addEventListener('mousemove', (event) => {
+                lastPosition.x = event.clientX;
+                lastPosition.y = event.clientY;
+            });
+        });
+
+        
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+

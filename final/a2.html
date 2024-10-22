@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>a2</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            background: url('imagess/e127a51dabe6175158c4fe867b39aca.png') no-repeat center center fixed;
+            background-size: cover;
+            filter: saturate(50%); /* 降低背景图片饱和度50% */
+            position: relative;
+        }
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #f0f0f0; /* 完全不透明的遮罩层 */
+            mask-image: radial-gradient(circle 130px at var(--mouse-x) var(--mouse-y), transparent 100%, black 100%);
+        }
+        .text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 5vw;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            color: rgb(255, 255, 255);
+            text-align: center;
+            z-index: 2; /* 提高层级，确保位于直线的上方 */
+            text-shadow: 0 0 2px black;
+            transition: transform 0.3s ease; /* 添加平滑的放大过渡效果 */
+            cursor: pointer; /* 鼠标悬停时显示为可点击 */
+        }
+        .text:hover {
+            transform: translate(-50%, -50%) scale(1.4); /* 鼠标悬停时文字放大1.4倍 */
+        }
+        .diamond {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 30px;
+            height: 30px;
+            background-color: rgb(0, 0, 0);
+            transform: rotate(45deg); /* 菱形效果 */
+            cursor: pointer;
+            z-index: 9999;
+        }
+        /* 横向直线 */
+        .line {
+            position: absolute;
+            top: 50%; /* 屏幕垂直中心 */
+            left: 0;
+            right: 0;
+            height: 5px; /* 直线的高度 */
+            background-color: black; /* 直线的颜色 */
+            z-index: 1; /* 在文字和遮罩层之间 */
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay" id="overlay"></div>
+    <div class="line"></div> <!-- 添加的横向直线 -->
+    <div class="text" onclick="window.location.href='puzzles.html'">LETS PLAY PUZZLES</div> <!-- 添加点击跳转事件 -->
+    <div class="diamond" onclick="history.back()"></div>
+
+    <script>
+        const overlay = document.getElementById('overlay');
+
+        document.addEventListener('mousemove', (e) => {
+            const x = e.clientX;
+            const y = e.clientY;
+
+            overlay.style.setProperty('--mouse-x', `${x}px`);
+            overlay.style.setProperty('--mouse-y', `${y}px`);
+        });
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Background Grid Cloning</title>
+    <style>
+        body {
+            margin: 0;
+            background-color: #f0f0f0;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .background-grid {
+            position: absolute;
+            top: 12vh;
+            left: 30vw;
+            width: 100%;
+            height: 40%;
+            display: grid;
+            grid-template-rows: repeat(40, 0.2fr);
+            pointer-events: none;
+        }
+
+        .backgrounddiamond {
+            width: 300px;
+            height: 300px;
+            background-color: transparent;
+            border: 1.5px solid black;
+            transform: rotate(45deg);
+            transition: transform 0.5s ease-in-out;
+            margin: -280px;
+            pointer-events: auto;
+        }
+
+        /* 透明度逐渐递减 */
+.backgrounddiamond:nth-child(1) {
+    border-color: rgba(0, 0, 0, 1); /* 最上方黑色边框 */
+}
+.backgrounddiamond:nth-child(2) {
+    border-color: rgba(0, 0, 0, 0.975);
+}
+.backgrounddiamond:nth-child(3) {
+    border-color: rgba(0, 0, 0, 0.95);
+}
+.backgrounddiamond:nth-child(4) {
+    border-color: rgba(0, 0, 0, 0.925);
+}
+.backgrounddiamond:nth-child(5) {
+    border-color: rgba(0, 0, 0, 0.9);
+}
+.backgrounddiamond:nth-child(6) {
+    border-color: rgba(0, 0, 0, 0.875);
+}
+.backgrounddiamond:nth-child(7) {
+    border-color: rgba(0, 0, 0, 0.85);
+}
+.backgrounddiamond:nth-child(8) {
+    border-color: rgba(0, 0, 0, 0.825);
+}
+.backgrounddiamond:nth-child(9) {
+    border-color: rgba(0, 0, 0, 0.8);
+}
+.backgrounddiamond:nth-child(10) {
+    border-color: rgba(0, 0, 0, 0.775);
+}
+.backgrounddiamond:nth-child(11) {
+    border-color: rgba(0, 0, 0, 0.75);
+}
+.backgrounddiamond:nth-child(12) {
+    border-color: rgba(0, 0, 0, 0.725);
+}
+.backgrounddiamond:nth-child(13) {
+    border-color: rgba(0, 0, 0, 0.7);
+}
+.backgrounddiamond:nth-child(14) {
+    border-color: rgba(0, 0, 0, 0.675);
+}
+.backgrounddiamond:nth-child(15) {
+    border-color: rgba(0, 0, 0, 0.65);
+}
+.backgrounddiamond:nth-child(16) {
+    border-color: rgba(0, 0, 0, 0.625);
+}
+.backgrounddiamond:nth-child(17) {
+    border-color: rgba(0, 0, 0, 0.6);
+}
+.backgrounddiamond:nth-child(18) {
+    border-color: rgba(0, 0, 0, 0.575);
+}
+.backgrounddiamond:nth-child(19) {
+    border-color: rgba(0, 0, 0, 0.55);
+}
+
+.backgrounddiamond:nth-child(20) {
+    border-color: rgba(0, 0, 0, 0.5);
+}
+.backgrounddiamond:nth-child(21) {
+    border-color: rgba(0, 0, 0, 0.475);
+}
+.backgrounddiamond:nth-child(22) {
+    border-color: rgba(0, 0, 0, 0.45);
+}
+.backgrounddiamond:nth-child(23) {
+    border-color: rgba(0, 0, 0, 0.45);
+}
+.backgrounddiamond:nth-child(24) {
+    border-color: rgba(0, 0, 0, 0.4);
+}
+.backgrounddiamond:nth-child(25) {
+    border-color: rgba(0, 0, 0, 0.375);
+}
+.backgrounddiamond:nth-child(26) {
+    border-color: rgba(0, 0, 0, 0.35);
+}
+.backgrounddiamond:nth-child(27) {
+    border-color: rgba(0, 0, 0, 0.35);
+}
+.backgrounddiamond:nth-child(28) {
+    border-color: rgba(0, 0, 0, 0.3);
+}
+.backgrounddiamond:nth-child(29) {
+    border-color: rgba(0, 0, 0, 0.275);
+}
+.backgrounddiamond:nth-child(30) {
+    border-color: rgba(0, 0, 0, 0.25);
+}
+.backgrounddiamond:nth-child(31) {
+    border-color: rgba(0, 0, 0, 0.25);
+}
+.backgrounddiamond:nth-child(32) {
+    border-color: rgba(0, 0, 0, 0.2);
+}
+.backgrounddiamond:nth-child(33) {
+    border-color: rgba(0, 0, 0, 0.175);
+}
+.backgrounddiamond:nth-child(34) {
+    border-color: rgba(0, 0, 0, 0.15);
+}
+.backgrounddiamond:nth-child(35) {
+    border-color: rgba(0, 0, 0, 0.15);
+}
+.backgrounddiamond:nth-child(36) {
+    border-color: rgba(0, 0, 0, 0.1);
+}
+.backgrounddiamond:nth-child(37) {
+    border-color: rgba(0, 0, 0, 0.075);
+}
+.backgrounddiamond:nth-child(38) {
+    border-color: rgba(0, 0, 0, 0.05);
+}
+.backgrounddiamond:nth-child(39) {
+    border-color: rgba(0, 0, 0, 0.05);
+}
+.backgrounddiamond:nth-child(40) {
+    border-color: rgba(0, 0, 0, 0);
+}
+
+        /* 添加hover效果 */
+        .hovered {
+            transform: scale(1.5) rotate(360deg);
+            transition: all 100ms ease-in-out;
+        }
+
+
+/* 方片形卡片样式 */
+.diamond-card {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 350px;
+    height: 350px;
+    background-color: white;
+    /* border: 2px solid black; */
+    transform: translate(-50%, -50%) rotate(45deg); /* 使用translate调整中心位置 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.8);
+    transition: transform 0.1s ease-out;
+    transform-style: preserve-3d;
+    perspective: 1000px;
+    z-index: 1000;
+}
+
+.diamond-card-content {
+            transform: rotate(-45deg);
+            text-align: center;
+            font-family: 'Arial', sans-serif;
+            font-size: 30px;
+            color: #333;
+        }
+
+
+
+
+
+.white-backgrounddiamond {
+    width: 300px;
+    height: 300px;
+    background-color: transparent;
+    border: 2px solid white;
+    transform: none;
+    transition: none;
+    margin: -280px;
+}
+
+/* 不同大小 */
+.small {
+    width: 200px;
+    height: 200px;
+    margin: -180px;
+}
+
+.medium {
+    width: 250px;
+    height: 250px;
+    margin: -230px;
+}
+
+.large {
+    width: 350px;
+    height: 350px;
+    margin: -280px;
+}
+
+
+
+/* 设定菱形容器的样式 */
+.falling-diamond {
+    position: absolute;
+    width: 50px; /* 初始宽度，可通过 JS 动态调整 */
+    height: 50px; /* 初始高度，可通过 JS 动态调整 */
+    transform: rotate(45deg);
+    opacity: 1; /* 初始透明度，可通过 JS 动态调整 */
+    pointer-events: none; /* 禁止鼠标事件，避免影响用户操作 */
+    z-index: 9999;
+}
+
+/* 动画效果：从上到下掉落 */
+@keyframes fall {
+    0% {
+        transform: translateY(-100vh) rotate(45deg); /* 从页面顶部开始 */
+    }
+    100% {
+        transform: translateY(100vh) rotate(45deg); /* 移动到页面底部 */
+    }
+}
+
+
+
+
+
+.down-arrow {
+    position: absolute;
+    top: 3vh; /* 在背景网格的上方 */
+    left: 81%;
+    transform: translateX(-50%);
+    font-size: 50px;
+    color: black;
+    cursor: pointer;
+    transition: transform 0.4s ease-in-out;
+}
+
+.down-arrow:hover {
+    transform: translateX(-50%) rotate(360deg);
+}
+.down-arrow2{
+    position: absolute;
+    top: 22vh; /* 在背景网格的上方 */
+    left: 5%;
+    transform: translateX(-50%);
+    font-size: 50px;
+    color: black;
+    cursor: pointer;
+    transition: transform 0.4s ease-in-out;
+}
+
+
+
+
+
+
+.diamond {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 30px;
+            height: 30px;
+            background-color: rgb(0, 0, 0);
+            transform: rotate(45deg); /* 菱形效果 */
+            cursor: pointer;
+            z-index: 9999;
+        }
+
+
+
+
+
+
+
+
+        .text-left-arrow {
+    position: absolute;
+    top: 4vh;
+    left: 72%;
+    font-weight: lighter;
+    transform: translateX(-50%);
+    font-size: 20px;
+    color: black;
+    cursor: default;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+.right-arrow-button {
+    position: absolute;
+    bottom: 5vh;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 1px 30px;
+    background-color: rgb(0, 0, 0);
+    border: 2px solid black;
+    border-radius: 10px;
+    font-size: 30px;
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out;
+    z-index: 9999;
+}
+
+.right-arrow-button:hover {
+    transform: translateX(-50%) scale(1.3);
+}
+
+.right-arrow-button::before {
+    content: '→';
+    font-size: 30px;
+    color: rgb(255, 255, 255);
+}
+
+
+/* 控制悬停时显示的文字 */
+.bottom-center-text {
+    position: absolute;
+    bottom: 12vh; /* 距离按钮上方的距离 */
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 25px;
+    color: black;
+    opacity: 0; /* 初始隐藏 */
+    transition: opacity 0.3s ease-in-out;
+    font-weight: lighter;
+    z-index: 10000;
+}
+
+/* 当鼠标悬停在按钮上时显示文字 */
+.right-arrow-button:hover + .bottom-center-text {
+    opacity: 1; /* 悬停时显示 */
+}
+
+
+
+
+
+
+        #trail-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none; /* 使拖尾不干扰鼠标事件 */
+            z-index: 9999; /* 确保在所有内容之上 */
+        }
+
+        .trail, #current, #last-trail {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 1.2px solid black; /* 使图案空心 */
+            transform: rotate(45deg); /* 使其看起来像菱形 */
+            pointer-events: none;
+            border-radius: 0; /* 使拖尾形状为菱形 */
+            transform-origin: center; /* 确保旋转时以中心为基点 */
+        }
+
+        #current {
+            border-color: black; /* 确保当前图案为黑色 */
+        }
+
+        #last-trail {
+            border-color: black; /* 确保最后一刻图案为黑色 */
+        }
+    </style>
+</head>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<body>
+
+    <!-- Original grid -->
+    <div class="background-grid">
+        <div class="backgrounddiamond"></div>
+        <div class="backgrounddiamond"></div>
+        <div class="backgrounddiamond"></div>
+        <div class="backgrounddiamond"></div>
+        <div class="backgrounddiamond"></div>
+        <div class="backgrounddiamond"></div>
+        <div class="backgrounddiamond"></div>
+        <div class="backgrounddiamond"></div>
+        <div class="backgrounddiamond"></div>
+        <div class="backgrounddiamond"></div>
+        <div class="backgrounddiamond"></div>
+        <div class="backgrounddiamond"></div>
+        <div class="backgrounddiamond"></div>
+        <div class="backgrounddiamond"></div>
+        <div class="backgrounddiamond"></div>
+        <div class="backgrounddiamond"></div>
+        <div class="backgrounddiamond"></div>
+        <div class="backgrounddiamond"></div>
+        <div class="backgrounddiamond"></div>
+        <div class="backgrounddiamond"></div>
+        <div class="backgrounddiamond"></div>
+        <div class="backgrounddiamond"></div>
+        <div class="backgrounddiamond"></div>
+        <div class="backgrounddiamond"></div>
+        <div class="backgrounddiamond"></div>
+        <div class="backgrounddiamond"></div>
+        <div class="backgrounddiamond"></div>
+        <div class="backgrounddiamond"></div>
+        <div class="backgrounddiamond"></div>
+        <div class="backgrounddiamond"></div>
+        <div class="backgrounddiamond"></div>
+        <div class="backgrounddiamond"></div>
+        <div class="backgrounddiamond"></div>
+        <div class="backgrounddiamond"></div>
+        <div class="backgrounddiamond"></div>
+        <div class="backgrounddiamond"></div>
+        <div class="backgrounddiamond"></div>
+        <div class="backgrounddiamond"></div>
+        <div class="backgrounddiamond"></div>
+        <div class="backgrounddiamond"></div>
+    </div>
+
+    <div class="diamond-card" id="diamondCard">
+        <div class="diamond-card-content">
+            SWIPE THROUGH<br>DIAMOND BOXES<br>FROM THE TOP!
+        </div>
+    </div>
+
+    <div id="trail-container">
+        <div id="current"></div>
+        <div id="last-trail"></div>
+    </div>
+
+    <div class="down-arrow" id="downArrow">&#x2193;</div> <!-- 向下箭头 -->
+    <div class="down-arrow2" id="downArrow2">&#x2193;</div> <!-- 向下箭头 -->
+
+
+    <div class="diamond" id="backButton"></div>
+
+    <div class="text-left-arrow" id="textLeftArrow">SlLIDE DOWN FROM HERE</div>
+<div class="down-arrow" id="downArrow">&#x2193;</div>
+
+<div class="right-arrow-button" id="nextPageButton"></div>
+<div class="bottom-center-text">Which looks more 3D? White squares or black diamonds?</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <script>
+                        document.addEventListener('DOMContentLoaded', () => {
+            const trailContainer = document.getElementById('trail-container');
+            const trailCount = 20; // 拖尾数量
+            const trails = [];
+
+            // 创建拖尾元素
+            for (let i = 0; i < trailCount; i++) {
+                const trail = document.createElement('div');
+                trail.className = 'trail';
+                trail.style.opacity = (1 - i / trailCount); // 设置初始不透明度
+                trailContainer.appendChild(trail);
+                trails.push(trail);
+            }
+
+            // 创建光标下方的图案
+            const current = document.getElementById('current');
+            // 创建拖尾最后一刻的位置图案
+            const lastTrail = document.getElementById('last-trail');
+
+            let lastPosition = { x: -100, y: -100 };
+
+            function update() {
+                // 将每个拖尾的位置更新到前一个拖尾的位置
+                for (let i = trailCount - 1; i > 0; i--) {
+                    const currentTrail = trails[i];
+                    const previousTrail = trails[i - 1];
+                    currentTrail.style.left = `${previousTrail.style.left}`;
+                    currentTrail.style.top = `${previousTrail.style.top}`;
+                    currentTrail.style.opacity = `${1 - i / trailCount}`; // 更新拖尾的透明度
+                }
+
+                // 更新第一个拖尾的位置到鼠标位置
+                const firstTrail = trails[0];
+                firstTrail.style.left = `${lastPosition.x - 10}px`; // 使菱形中心位于光标位置
+                firstTrail.style.top = `${lastPosition.y - 10}px`; // 使菱形中心位于光标位置
+                firstTrail.style.opacity = '1';
+
+                // 更新当前光标下方的图案的位置
+                current.style.left = `${lastPosition.x - 10}px`; // 使菱形中心位于光标位置
+                current.style.top = `${lastPosition.y - 10}px`; // 使菱形中心位于光标位置
+
+                // 更新拖尾最后一刻的位置图案的位置
+                lastTrail.style.left = `${firstTrail.style.left}`;
+                lastTrail.style.top = `${firstTrail.style.top}`;
+
+                // 继续动画
+                requestAnimationFrame(update);
+            }
+
+            // 开始更新
+            requestAnimationFrame(update);
+
+            // 监听鼠标移动事件
+            document.addEventListener('mousemove', (event) => {
+                lastPosition.x = event.clientX;
+                lastPosition.y = event.clientY;
+            });
+        });
+
+
+
+
+
+
+
+
+
+        const card = document.getElementById('diamondCard');
+
+        document.addEventListener('mousemove', (event) => {
+            const cardRect = card.getBoundingClientRect();
+            const cardX = cardRect.left + cardRect.width / 2;
+            const cardY = cardRect.top + cardRect.height / 2;
+            const mouseX = event.clientX;
+            const mouseY = event.clientY;
+
+            // 计算鼠标相对于卡片中心的位置
+            const deltaX = mouseX - cardX;
+            const deltaY = mouseY - cardY;
+
+            // 调整旋转角度，使卡片朝向鼠标
+            const rotateX = deltaY / 20; // 根据鼠标上下移动调整旋转角度
+            const rotateY = -deltaX / 20; // 根据鼠标左右移动调整旋转角度
+
+            // 保留translate(-50%, -50%)，并添加3D旋转效果
+            card.style.transform = `translate(-50%, -50%) rotate(45deg) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+document.getElementById('backButton').addEventListener('click', function() {
+        window.open('index.html');
+    });
+
+
+    document.getElementById('nextPageButton').addEventListener('click', function() {
+    window.location.href = 'b2.html'; // 替换为实际的下一页面URL
+});
+
+
+
+
+
+
+
+
+
+
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // 克隆并修改第一个背景网格
+            const originalGrid = document.querySelector('.background-grid');
+            const newGrid1 = originalGrid.cloneNode(true); // 克隆背景网格及其子元素
+
+            // 修改第一个新背景网格的位置
+            newGrid1.style.top = '40vh';
+            newGrid1.style.left = '87.5vw';
+
+            // 获取第一个新背景网格中的所有菱形框
+            const diamonds1 = newGrid1.querySelectorAll('.backgrounddiamond');
+
+            // 修改第一个新网格中每个菱形框的大小，并添加 hover 效果
+            diamonds1.forEach(diamond => {
+                diamond.style.width = '250px';
+                diamond.style.height = '250px';
+                diamond.style.margin = '-230px';
+            });
+
+            // 将克隆的背景网格添加到页面中
+            document.body.appendChild(newGrid1);
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // 克隆并修改第二个背景网格
+            const originalGrid = document.querySelector('.background-grid');
+            const newGrid2 = originalGrid.cloneNode(true); // 克隆背景网格及其子元素
+
+            // 修改第二个新背景网格的位置
+            newGrid2.style.top = '55vh';
+            newGrid2.style.left = '10vw';
+
+            // 获取第二个新背景网格中的所有菱形框
+            const diamonds2 = newGrid2.querySelectorAll('.backgrounddiamond');
+
+            // 修改第二个新网格中每个菱形框的大小，并添加 hover 效果
+            diamonds2.forEach(diamond => {
+                diamond.style.width = '200px';
+                diamond.style.height = '200px';
+                diamond.style.margin = '-180px';
+            });
+
+            // 将克隆的背景网格添加到页面中
+            document.body.appendChild(newGrid2);
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // 克隆并修改第三个背景网格
+            const originalGrid = document.querySelector('.background-grid');
+            const newGrid3 = originalGrid.cloneNode(true); // 克隆背景网格及其子元素
+        
+            // 修改第三个新背景网格的位置
+            newGrid3.style.top = '98vh';
+            newGrid3.style.left = '40vw';
+        
+            // 获取第三个新背景网格中的所有菱形框
+            const diamonds3 = newGrid3.querySelectorAll('.backgrounddiamond');
+        
+            // 修改第三个新网格中每个菱形框的大小，并添加 hover 效果
+            diamonds3.forEach(diamond => {
+                diamond.style.width = '150px';
+                diamond.style.height = '150px';
+                diamond.style.margin = '-135px';
+                diamond.style.backgroundColor = 'rgba(208,68,76,0.15)';
+                diamond.style.borderColor = 'transparent';
+            });
+        
+            // 将克隆的背景网格添加到页面中
+            document.body.appendChild(newGrid3);
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // 克隆并修改第四个背景网格
+            const originalGrid = document.querySelector('.background-grid');
+            const newGrid4 = originalGrid.cloneNode(true); // 克隆背景网格及其子元素
+        
+            // 修改第四个新背景网格的位置
+            newGrid4.style.top = '100vh';
+            newGrid4.style.left = '95vw';
+        
+            // 获取第四个新背景网格中的所有菱形框
+            const diamonds4 = newGrid4.querySelectorAll('.backgrounddiamond');
+        
+            // 修改第四个新网格中每个菱形框的大小，并添加 hover 效果
+            diamonds4.forEach(diamond => {
+                diamond.style.width = '280px';
+                diamond.style.height = '280px';
+                diamond.style.margin = '-220px';
+                diamond.style.backgroundColor = 'rgba(106,150,204,0.1)';
+                diamond.style.borderColor = 'transparent';
+            });
+        
+            // 将克隆的背景网格添加到页面中
+            document.body.appendChild(newGrid4);
+        });
+
+        // 添加悬停效果的函数
+        function addHoverEffectToDiamonds() {
+            document.querySelectorAll('.backgrounddiamond').forEach(diamond => {
+                let timeout;
+
+                diamond.addEventListener('mouseenter', () => {
+                    clearTimeout(timeout); // 清除任何已有的计时器
+                    diamond.classList.add('hovered'); // 添加hovered类
+                });
+
+                diamond.addEventListener('mouseleave', () => {
+                    timeout = setTimeout(() => {
+                        diamond.classList.remove('hovered'); // 延迟1.5秒后移除hovered类
+                    }, 1500); // 延迟1.5秒
+                });
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            addHoverEffectToDiamonds(); // 在页面加载后添加 hover 效果
+        });
+
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+    const originalGrid = document.querySelector('.background-grid');
+
+    // 克隆第一个背景网格
+    const newGrid1 = originalGrid.cloneNode(true);
+    newGrid1.style.top = '60vh';
+    newGrid1.style.left = '30vw';
+    const diamonds1 = newGrid1.querySelectorAll('.backgrounddiamond');
+    diamonds1.forEach(diamond => {
+        diamond.classList.replace('backgrounddiamond', 'white-backgrounddiamond');
+        diamond.classList.add('small');
+    });
+    document.body.appendChild(newGrid1);
+
+    // 克隆第二个背景网格
+    const newGrid2 = originalGrid.cloneNode(true);
+    newGrid2.style.top = '20vh';
+    newGrid2.style.left = '50vw';
+    const diamonds2 = newGrid2.querySelectorAll('.backgrounddiamond');
+    diamonds2.forEach(diamond => {
+        diamond.classList.replace('backgrounddiamond', 'white-backgrounddiamond');
+        diamond.classList.add('medium');
+    });
+    document.body.appendChild(newGrid2);
+
+    // 克隆第三个背景网格
+    const newGrid3 = originalGrid.cloneNode(true);
+    newGrid3.style.top = '90vh';
+    newGrid3.style.left = '70vw';
+    const diamonds3 = newGrid3.querySelectorAll('.backgrounddiamond');
+    diamonds3.forEach(diamond => {
+        diamond.classList.replace('backgrounddiamond', 'white-backgrounddiamond');
+        diamond.classList.add('large');
+    });
+    document.body.appendChild(newGrid3);
+});
+
+
+
+
+
+
+
+
+
+
+// 最大同时存在的菱形数量
+const maxDiamonds = 10; 
+let currentDiamonds = 0;
+
+// 创建随机菱形框和菱形片的函数
+function createFallingDiamond() {
+    if (currentDiamonds >= maxDiamonds) return; // 检查当前数量是否超过最大数量
+
+    // 创建一个新的div元素作为菱形
+    const diamond = document.createElement("div");
+    diamond.classList.add("falling-diamond");
+
+    // 随机生成大小、透明度和动画时间
+    const size = Math.random() * (100 - 30) + 30; // 菱形大小在30px到100px之间
+    //const opacity = Math.random() * (0.6 - 0.1) + 0.1; // 透明度在0.1到0.6之间
+    const opacity =1;
+    const duration = Math.random() * (10 - 3) + 3; // 动画持续时间在3到10秒之间
+
+    // 设置菱形的样式属性
+    const colors = ['#D41031', '#3F4583', '#FCE603']; // 定义三种颜色
+    const randomColor = colors[Math.floor(Math.random() * colors.length)];
+    diamond.style.backgroundColor = randomColor;
+    diamond.style.width = `${size}px`;
+    diamond.style.height = `${size}px`;
+    diamond.style.opacity = opacity;
+    diamond.style.left = `${Math.random() * 100}vw`; // 随机位置
+    diamond.style.animation = `fall ${duration}s linear`; // 设置动画和速度
+
+    // 将菱形添加到页面上
+    document.body.appendChild(diamond);
+    currentDiamonds++;
+
+    // 监听动画结束事件，删除掉落到下方的菱形，并更新当前数量
+    diamond.addEventListener('animationend', () => {
+        diamond.remove();
+        currentDiamonds--;
+    });
+}
+
+// 定期生成新的菱形
+setInterval(createFallingDiamond, 1000); // 每1秒尝试生成一个新菱形
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </script>
+
+</body>
+</html>
+

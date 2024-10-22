@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>a1</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            position: relative;
+            overflow: hidden; /* 确保背景菱形不会溢出 */
+        }
+
+        .line {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background-color: black;
+            z-index: 1;
+        }
+
+        .dashed-line {
+            position: absolute;
+            top: 50%;
+            height: 8px;
+            background-color: transparent;
+            border-top: 6px dashed #f0f0f0; /* 虚线样式 */
+            z-index: 2;
+            display: none; /* 默认隐藏 */
+        }
+
+        .scroll-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 10vw; /* 字体大小为视口宽度的20% */
+            font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            white-space: nowrap;
+            overflow: hidden;
+            z-index: 3;
+            animation: scroll 12s linear infinite;
+            color: black; /* 默认颜色 */
+            transition: color 0.3s, text-shadow 0.3s; /* 添加过渡效果 */
+        }
+
+        .highlight {
+            color: white; /* 鼠标悬停时文字颜色 */
+            text-shadow: 0 0 5px black; /* 添加黑色边框效果 */
+        }
+
+        @keyframes scroll {
+            0% {
+                transform: translate(-50%, -50%) translateX(100%);
+            }
+            100% {
+                transform: translate(-50%, -50%) translateX(-100%);
+            }
+        }
+
+        #trail-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none; /* 使拖尾不干扰鼠标事件 */
+            z-index: 9999; /* 确保在所有内容之上 */
+        }
+
+        .trail, #current, #last-trail {
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            border: 1.2px solid black; /* 使图案空心 */
+            transform: rotate(45deg); /* 使其看起来像菱形 */
+            pointer-events: none;
+            border-radius: 0; /* 使拖尾形状为菱形 */
+            transform-origin: center; /* 确保旋转时以中心为基点 */
+        }
+
+        #current {
+            border-color: black; /* 确保当前图案为黑色 */
+        }
+
+        #last-trail {
+            border-color: black; /* 确保最后一刻图案为黑色 */
+        }
+
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 30px;
+            height: 30px;
+            background-color: black;
+            transform: rotate(45deg); /* 菱形效果 */
+            cursor: pointer;
+            z-index: 9999;
+        }
+
+        .think-about {
+            position: absolute;
+            top: 20px;
+            right: 80px;
+            color: #f0f0f0; /* 文字颜色 */
+            font-size: 6rem; /* 字体大小 */
+            text-align: right; /* 右对齐 */
+            z-index: 999;
+            -webkit-text-stroke: 1px black; /* 文字描边 */
+            /*text-shadow: 0 0 2px black; /* 黑色描边 */
+        }
+
+        /* 添加背景菱形框 */
+        .diamond {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            background-color: transparent; /* 透明 */
+            border: 2px solid black; /* 黑色边框 */
+            transform: rotate(45deg); /* 菱形效果 */
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="back-button" onclick="window.open('index.html')"></div>
+    <div class="think-about">
+        <div>THINK</div>
+        <div>ABOUT</div>
+        <div>:</div>
+    </div>
+    <div class="line" id="line"></div>
+    <div class="dashed-line" id="dashedLine"></div>
+    <div class="scroll-text" id="scrollText">
+        <span class="clickable">HOW</span> 
+        <span class="clickable">TO</span> 
+        <span class="clickable">MAKE</span> 
+        <span class="clickable">YOUR</span> 
+        <span class="clickable">FLOOR</span> 
+        <span class="clickable">PLAN</span>
+    </div>
+
+    <div id="trail-container">
+        <div id="current"></div>
+        <div id="last-trail"></div>
+    </div>
+
+    <script>
+        // 创建散落的黑色菱形框
+        for (let i = 0; i < 10; i++) {
+            const diamond = document.createElement('div');
+            diamond.className = 'diamond';
+            diamond.style.left = `${Math.random() * 100}vw`; // 随机左边距
+            diamond.style.top = `${Math.random() * 100}vh`; // 随机上边距
+            diamond.style.opacity = Math.random(); // 随机透明度
+            document.body.appendChild(diamond);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const trailContainer = document.getElementById('trail-container');
+            const trailCount = 20; // 增加拖尾的数量以使拖尾更长
+            const trails = [];
+
+            // 创建拖尾元素
+            for (let i = 0; i < trailCount; i++) {
+                const trail = document.createElement('div');
+                trail.className = 'trail';
+                trail.style.opacity = (1 - i / trailCount); // 设置初始不透明度
+                trailContainer.appendChild(trail);
+                trails.push(trail);
+            }
+
+            // 创建光标下方的图案
+            const current = document.getElementById('current');
+            // 创建拖尾最后一刻的位置图案
+            const lastTrail = document.getElementById('last-trail');
+
+            let lastPosition = { x: -100, y: -100 };
+
+            function update() {
+                // 将每个拖尾的位置更新到前一个拖尾的位置
+                for (let i = trailCount - 1; i > 0; i--) {
+                    const currentTrail = trails[i];
+                    const previousTrail = trails[i - 1];
+                    currentTrail.style.left = `${previousTrail.style.left}`;
+                    currentTrail.style.top = `${previousTrail.style.top}`;
+                    currentTrail.style.opacity = `${1 - i / trailCount}`; // 更新拖尾的透明度
+                }
+
+                // 更新第一个拖尾的位置到鼠标位置
+                const firstTrail = trails[0];
+                firstTrail.style.left = `${lastPosition.x - 10}px`; // 使菱形中心位于光标位置
+                firstTrail.style.top = `${lastPosition.y - 10}px`; // 使菱形中心位于光标位置
+                firstTrail.style.opacity = '1';
+
+                // 更新当前光标下方的图案的位置
+                current.style.left = `${lastPosition.x - 10}px`; // 使菱形中心位于光标位置
+                current.style.top = `${lastPosition.y - 10}px`; // 使菱形中心位于光标位置
+
+                // 更新拖尾最后一刻的位置图案的位置
+                lastTrail.style.left = `${firstTrail.style.left}`;
+                lastTrail.style.top = `${firstTrail.style.top}`;
+
+                // 继续动画
+                requestAnimationFrame(update);
+            }
+
+            // 开始更新
+            requestAnimationFrame(update);
+
+            // 监听鼠标移动事件
+            document.addEventListener('mousemove', (event) => {
+                lastPosition.x = event.clientX;
+                lastPosition.y = event.clientY;
+
+                const line = document.getElementById('line');
+                const dashedLine = document.getElementById('dashedLine');
+                const scrollText = document.getElementById('scrollText');
+                const words = scrollText.querySelectorAll('span');
+
+                const lineRect = line.getBoundingClientRect();
+                const linePosition = event.clientX; // 鼠标X坐标
+
+                // 检查鼠标X坐标范围
+                const leftBoundary = linePosition - (10 * window.innerWidth / 100);
+                const rightBoundary = linePosition + (10 * window.innerWidth / 100);
+
+                // 设置虚线的位置和宽度
+                dashedLine.style.left = `${leftBoundary}px`;
+                dashedLine.style.width = `${rightBoundary - leftBoundary}px`;
+
+                // 判断是否在范围内
+                if (leftBoundary >= lineRect.left && rightBoundary <= lineRect.right) {
+                    dashedLine.style.display = 'block'; // 显示虚线
+                } else {
+                    dashedLine.style.display = 'none'; // 隐藏虚线
+                }
+
+                // 检查鼠标是否在每个单词上方
+                words.forEach(word => {
+                    const textRect = word.getBoundingClientRect();
+                    if (event.clientX >= textRect.left && event.clientX <= textRect.right &&
+                        event.clientY >= textRect.top && event.clientY <= textRect.bottom) {
+                        word.classList.add('highlight'); // 添加高亮类
+                    } else {
+                        word.classList.remove('highlight'); // 移除高亮类
+                    }
+                });
+            });
+
+            // 添加单词点击事件
+            const nextPageUrl = 'a2.html'; // 替换为你的目标网址
+            document.querySelectorAll('.clickable').forEach(word => {
+                word.addEventListener('click', () => {
+                    window.location.href = nextPageUrl;
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>
+
+
+
+
+

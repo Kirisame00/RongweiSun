@@ -1,0 +1,751 @@
+body {
+    margin: 0;
+    background-color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+
+    overflow: hidden;
+ 
+    position: relative;
+}
+
+
+
+
+
+
+
+
+
+.container {
+    width: 40vw;
+    height: 40vw;
+    position: relative;
+    background-color: rgb(255, 255, 255);
+    transform-origin: center center;
+    z-index: 10;
+
+}
+.triangle1{
+    position: absolute;
+    bottom: 0%;
+    right: 0%;
+    width: 0;
+    height: 0;
+    border-left: 20.667vw solid transparent;
+    border-bottom: 20.667vw solid #f0f0f0;
+}
+.triangle2{
+    position: absolute;
+    top: 0%;
+    right: 0%;
+    width: 0;
+    height: 0;
+    border-left: 20.667vw solid transparent;
+    border-top: 20.667vw solid #f0f0f0;
+}
+.triangle3{
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    width: 0;
+    height: 0;
+    border-right: 20.667vw solid transparent;
+    border-top: 20.667vw solid #f0f0f0;
+}
+.triangle4{
+    position: absolute;
+    bottom: 0%;
+    left: 0%;
+    width: 0;
+    height: 0;
+    border-right: 20.667vw solid transparent;
+    border-bottom: 20.667vw solid #f0f0f0;
+}
+.line {
+    background-color: black;
+    position: absolute;
+}
+
+.line.vertical {
+    height: 100%;
+}
+.horizontal.line1 {
+    left: 0%;
+    top: 30%;
+    height: 2.667%;
+    width: 38.667%;
+}
+.horizontal.line2 {
+    bottom: 22.933%;
+    left: 0%;
+    height: 2.6667%;
+    width: 38.667%;
+}
+.horizontal.line3 {
+    top: 21.6%;
+    right: 0%;
+    height: 2%;
+    width: 59.333%;
+}
+.horizontal.line4 {
+    top: 54.333%;
+    right: 0%;
+    height: 2%;
+    width: 59.333%;
+}
+.vertical.line1 {
+    left: 10%;
+    width: 3.333%;
+    height: 50%;
+    top: 25%;
+}
+.vertical.line2 {
+    left: 38.667%;
+    width: 2%;
+    background-color: black;
+}
+.vertical.line3 {
+    left: 73.6%;
+    width: 2%;
+}
+.red {
+    background-color: #D41031;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 38.667%;
+    height: 30%;
+}
+.blue {
+    background-color: #3F4583;
+    position: absolute;
+    top: 56.1333%;
+    right: 0;
+    width: 24.4%;
+    height: 16.4%;
+}
+.yellow {
+    background-color: #FCE603;
+    position: absolute;
+    bottom: 0;
+    left: 0%;
+    width: 38.667%;
+    height: 22.933%;
+}
+.black {
+    background-color: rgb(0, 0, 0);
+    position: absolute;
+    bottom: 0%;
+    right: 0;
+    width: 59.333%;
+    height: 14.667%;
+}
+.REDbutton{
+    position: absolute;
+    top: 13%;
+    left: 20.6667%;
+    width: 0;
+    height: 0;
+    border-left: 7.2vw solid transparent;
+    border-bottom: 7.2vw solid #D41031;
+    transition: transform 0.3s;
+}
+.REDbutton:hover {
+    transform: scale(1.4);
+}
+
+.REDbutton::before {
+    content: "Expand your CANVAS";
+    position: absolute;
+    left: -140px; /* Adjust the distance from the triangle */
+    top: 40px;
+    transform: translateY(-50%);
+           /* width: 100px;
+            height: 60px;
+            background-color: white;*/
+            color: black;
+           /* border: 1px solid black;
+            padding: 10px;
+            box-sizing: border-box; */
+            font-weight: 300; /* Thinner font weight */
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            transform: rotate(-45deg);
+    opacity: 0;
+    white-space: nowrap;
+    transition: opacity 0.5s ease;
+}
+
+.REDbutton:hover::before {
+    opacity: 1;
+}
+
+.YELLOWbutton{
+    position: absolute;
+    bottom: 12.8%;
+    left: 28.333%;
+    width: 0;
+    height: 0;
+    border-left: 4.2vw solid transparent;
+    border-top: 4.2vw solid #FCE603;
+    transition: transform 0.3s;
+}
+.YELLOWbutton:hover {
+    transform: scale(1.6);
+}
+
+.YELLOWbutton::before {
+    content: "About me";
+    position: absolute;
+    top: -30px; /* Adjust the distance from the triangle */
+    left: -72px;
+    transform: translateY(-50%);
+           /* width: 100px;
+            height: 60px;
+            background-color: white;*/
+            color: black;
+           /* border: 1px solid black;
+            padding: 10px;
+            box-sizing: border-box; */
+            font-weight: 300; /* Thinner font weight */
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            transform: rotate(45deg);
+    opacity: 0;
+    white-space: nowrap;
+    transition: opacity 0.5s ease;
+    z-index: 9999;
+}
+
+.YELLOWbutton:hover::before {
+    opacity: 1;
+}
+
+
+
+.BLUEbutton{
+    position: absolute;
+    bottom: 27.333%;
+    right: 7.8%;
+    width: 0;
+    height: 0;
+    border-right: 6.56vw solid transparent;
+    border-top: 6.56vw solid #3F4583;
+    transition: transform 0.3s;
+}
+.BLUEbutton:hover {
+    transform: scale(1.5);
+}
+
+.BLUEbutton::before {
+    content: "Stack up your CANVAS";
+    position: absolute;
+    top: -50px; /* Adjust the distance from the triangle */
+    left: -10px;
+    transform: translateY(-50%);
+           /* width: 100px;
+            height: 60px;
+            background-color: white;*/
+            color: black;
+           /* border: 1px solid black;
+            padding: 10px;
+            box-sizing: border-box; */
+            font-weight: 300; /* Thinner font weight */
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            transform: rotate(-45deg);
+    opacity: 0;
+    white-space: nowrap;
+    transition: opacity 0.5s ease;
+    z-index: 9999;
+}
+
+.BLUEbutton:hover::before {
+    opacity: 1;
+    z-index: 9999;
+}
+
+.hovered {
+    transform: scale(1.5) rotate(360deg);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.home1{
+    width: 19vw;
+    height: 60vh;
+    z-index: 50;
+    transform: skewY(45deg);
+    background-color: #EEC34C;
+    position: absolute;
+    top:73vh;
+    right: 50vw;
+}
+.home2{
+    width: 19vw;
+    height: 60vh;
+    z-index: 50;
+    transform: skewY(-45deg);
+    background-color: #6A96CB;
+    position: absolute;
+    top:73vh;
+    left: 50vw;
+}
+.windows1{
+    background-color: #91C4B5;
+    width: 4vw;
+    height: 10vh;
+    z-index: 51;
+    transform: skewY(45deg);
+    top:95vh;
+    left: 43vw;
+    position: absolute;
+    box-shadow: inset 6px 6px #383735;
+}
+.windows2{
+    background-color: #ffffff;
+    width: 4vw;
+    height: 10vh;
+    z-index: 51;
+    transform: skewY(-45deg);
+    top:83vh;
+    left: 60vw;
+    position: absolute;
+    box-shadow: inset 6px 6px rgb(71, 71, 71);
+}
+.windows3{
+    background-color: #ffffff;
+    width: 6vw;
+    height: 15vh;
+    z-index: 51;
+    transform: skewY(45deg);
+    top:70vh;
+    left: 32vw;
+    position: absolute;
+    box-shadow: inset 6px 6px #383735;
+}.windows4{
+    background-color: #ffffff;
+    width: 2vw;
+    height: 5vh;
+    z-index: 51;
+    transform: skewY(45deg);
+    top:94vh;
+    left: 38vw;
+    position: absolute;
+    box-shadow: inset 6px 6px #383735;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  /* .Diamond { 
+    background-color: black;
+    width: 200px;
+    height: 200px;
+    transform: rotate(45deg);
+    position: absolute;
+    z-index: 15;
+
+}
+
+/* Adjust the starting positions 
+.Diamond:nth-child(1) {
+    width: 100px;
+    height: 100px;
+    bottom: 200px;
+    left: 450px;
+    opacity: 0.05;  
+}
+.Diamond:nth-child(2) {
+    bottom: 180px;
+    left: 220px;
+    width: 220px;
+    height: 220px;
+    opacity: 0.07;  
+}
+.Diamond:nth-child(3) {
+    bottom: 100px;
+    left: 1200px;
+    opacity: 0.2;  
+}
+.Diamond:nth-child(4) {
+    bottom: 400px;
+    left: -50px;
+    opacity: 0.3;  
+}
+.Diamond:nth-child(5) {
+    bottom: 100px;
+    left: 80px;
+    background-color: transparent;
+    border: black 2px;
+ 
+}
+.Diamond:nth-child(6) {
+    bottom: 700px;
+    left: 1000px;
+    width: 400px;
+    height: 400px;
+    opacity: 0.1;  
+}
+.Diamond:nth-child(8) {  
+    top: 700px;
+    right: 1200px;
+    width: 300px;
+    height: 300px;
+    opacity: 0.1;  
+}
+
+.Diamond:nth-child(7) {
+    bottom: 900px;
+    left: 500px;
+    opacity: 0.1;  
+}  */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.background-grid {
+    position: absolute;
+    top: 12vh;
+    left: 30vw;
+    width: 100%;
+    height: 40%;
+    display: grid;
+    grid-template-rows: repeat(40, 0.2fr);
+    pointer-events: none;
+    z-index: 20;
+}
+
+.backgrounddiamond {
+    width: 300px;
+    height: 300px;
+    background-color: transparent;
+    border: 1.5px solid black;
+    transform: rotate(45deg);
+    transition: transform 0.5s ease-in-out;
+    margin: -280px;
+    pointer-events: auto;
+}
+
+/* 透明度逐渐递减 */
+.backgrounddiamond:nth-child(1) {
+    border-color: rgba(0, 0, 0, 1); /* 最上方黑色边框 */
+}
+.backgrounddiamond:nth-child(2) {
+    border-color: rgba(0, 0, 0, 0.975);
+}
+.backgrounddiamond:nth-child(3) {
+    border-color: rgba(0, 0, 0, 0.95);
+}
+.backgrounddiamond:nth-child(4) {
+    border-color: rgba(0, 0, 0, 0.925);
+}
+.backgrounddiamond:nth-child(5) {
+    border-color: rgba(0, 0, 0, 0.9);
+}
+.backgrounddiamond:nth-child(6) {
+    border-color: rgba(0, 0, 0, 0.875);
+}
+.backgrounddiamond:nth-child(7) {
+    border-color: rgba(0, 0, 0, 0.85);
+}
+.backgrounddiamond:nth-child(8) {
+    border-color: rgba(0, 0, 0, 0.825);
+}
+.backgrounddiamond:nth-child(9) {
+    border-color: rgba(0, 0, 0, 0.8);
+}
+.backgrounddiamond:nth-child(10) {
+    border-color: rgba(0, 0, 0, 0.775);
+}
+.backgrounddiamond:nth-child(11) {
+    border-color: rgba(0, 0, 0, 0.75);
+}
+.backgrounddiamond:nth-child(12) {
+    border-color: rgba(0, 0, 0, 0.725);
+}
+.backgrounddiamond:nth-child(13) {
+    border-color: rgba(0, 0, 0, 0.7);
+}
+.backgrounddiamond:nth-child(14) {
+    border-color: rgba(0, 0, 0, 0.675);
+}
+.backgrounddiamond:nth-child(15) {
+    border-color: rgba(0, 0, 0, 0.65);
+}
+.backgrounddiamond:nth-child(16) {
+    border-color: rgba(0, 0, 0, 0.625);
+}
+.backgrounddiamond:nth-child(17) {
+    border-color: rgba(0, 0, 0, 0.6);
+}
+.backgrounddiamond:nth-child(18) {
+    border-color: rgba(0, 0, 0, 0.575);
+}
+.backgrounddiamond:nth-child(19) {
+    border-color: rgba(0, 0, 0, 0.55);
+}
+
+.backgrounddiamond:nth-child(20) {
+    border-color: rgba(0, 0, 0, 0.5);
+}
+.backgrounddiamond:nth-child(21) {
+    border-color: rgba(0, 0, 0, 0.475);
+}
+.backgrounddiamond:nth-child(22) {
+    border-color: rgba(0, 0, 0, 0.45);
+}
+.backgrounddiamond:nth-child(23) {
+    border-color: rgba(0, 0, 0, 0.45);
+}
+.backgrounddiamond:nth-child(24) {
+    border-color: rgba(0, 0, 0, 0.4);
+}
+.backgrounddiamond:nth-child(25) {
+    border-color: rgba(0, 0, 0, 0.375);
+}
+.backgrounddiamond:nth-child(26) {
+    border-color: rgba(0, 0, 0, 0.35);
+}
+.backgrounddiamond:nth-child(27) {
+    border-color: rgba(0, 0, 0, 0.35);
+}
+.backgrounddiamond:nth-child(28) {
+    border-color: rgba(0, 0, 0, 0.3);
+}
+.backgrounddiamond:nth-child(29) {
+    border-color: rgba(0, 0, 0, 0.275);
+}
+.backgrounddiamond:nth-child(30) {
+    border-color: rgba(0, 0, 0, 0.25);
+}
+.backgrounddiamond:nth-child(31) {
+    border-color: rgba(0, 0, 0, 0.25);
+}
+.backgrounddiamond:nth-child(32) {
+    border-color: rgba(0, 0, 0, 0.2);
+}
+.backgrounddiamond:nth-child(33) {
+    border-color: rgba(0, 0, 0, 0.175);
+}
+.backgrounddiamond:nth-child(34) {
+    border-color: rgba(0, 0, 0, 0.15);
+}
+.backgrounddiamond:nth-child(35) {
+    border-color: rgba(0, 0, 0, 0.15);
+}
+.backgrounddiamond:nth-child(36) {
+    border-color: rgba(0, 0, 0, 0.1);
+}
+.backgrounddiamond:nth-child(37) {
+    border-color: rgba(0, 0, 0, 0.075);
+}
+.backgrounddiamond:nth-child(38) {
+    border-color: rgba(0, 0, 0, 0.05);
+}
+.backgrounddiamond:nth-child(39) {
+    border-color: rgba(0, 0, 0, 0.05);
+}
+.backgrounddiamond:nth-child(40) {
+    border-color: rgba(0, 0, 0, 0);
+}
+.hovered {
+    transform: scale(1.5) rotate(360deg);
+    transition: transform 0.1s ease-in-out;
+}
+
+
+
+
+.hover-text {
+    position: absolute;
+    top: 100px; /* Adjust the vertical position as needed */
+    right: 30%; /* Adjust the horizontal position as needed */
+    font-weight: lighter;
+    font-size: 24px; /* Change the font size as needed */
+    color: black;
+    opacity: 1; /* Initially invisible */
+    transition: opacity 0.5s ease; /* Smooth transition */
+    z-index: 9999; /* Ensure the text is on top of other elements */
+}
+
+/* .hover-text:hover { 
+    opacity: 1; /* Fully visible on hover 
+}*/
+
+
+
+
+
+
+/* 设定菱形容器的样式 */
+.falling-diamond {
+    position: absolute;
+    width: 50px; /* 初始宽度，可通过 JS 动态调整 */
+    height: 50px; /* 初始高度，可通过 JS 动态调整 */
+    transform: rotate(45deg);
+    opacity: 1; /* 初始透明度，可通过 JS 动态调整 */
+    pointer-events: none; /* 禁止鼠标事件，避免影响用户操作 */
+    z-index: 9999;
+}
+
+/* 动画效果：从上到下掉落 */
+@keyframes fall {
+    0% {
+        transform: translateY(-100vh) rotate(45deg); /* 从页面顶部开始 */
+    }
+    100% {
+        transform: translateY(100vh) rotate(45deg); /* 移动到页面底部 */
+    }
+}
+
+
+
+
+
+
+
+/* 定义路的整体样式，确保其位置在 background-grid 之上，container 之下 
+.road {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 20; /* 介于 background-grid 和 container 之间 
+
+/* 主路的路径样式 
+    fill: none;
+    stroke: #808080; /* 灰色主路 
+    stroke-width: 150px;
+
+}
+
+/* 虚线样式 
+.road-stripe {
+    fill: none;
+    stroke: white; /* 路上的白色虚线 
+    stroke-width: 10px;
+    stroke-dasharray: 40 40; /* 设置虚线效果 
+
+}*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#trail-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none; /* 使拖尾不干扰鼠标事件 */
+    z-index: 9999; /* 确保在所有内容之上 */
+}
+
+.trail, #current, #last-trail {
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    border: 1.2px solid black; /* 使图案空心 */
+    transform: rotate(45deg); /* 使其看起来像菱形 */
+    pointer-events: none;
+    border-radius: 0; /* 使拖尾形状为菱形 */
+    transform-origin: center; /* 确保旋转时以中心为基点 */
+}
+
+#current {
+    border-color: black; /* 确保当前图案为黑色 */
+}
+
+#last-trail {
+    border-color: black; /* 确保最后一刻图案为黑色 */
+}
+.circle {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background-color: black;
+    border-radius: 50%;
+    border: 1px solid white;
+    transition: top 1s linear;
+    z-index: 9999;
+}
